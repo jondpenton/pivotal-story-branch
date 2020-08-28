@@ -4,9 +4,9 @@ import { startApp } from "./app";
 require("dotenv").config();
 
 async function bootstrap() {
-  if (!process.env.TOKEN) {
+  if (!process.env.PIVOTAL_TRACKER_TOKEN) {
     throw new Error(
-      "TOKEN env is required. It can be found here: https://www.pivotaltracker.com/profile"
+      "PIVOTAL_TRACKER_TOKEN env is required. It can be found here: https://www.pivotaltracker.com/profile"
     );
   }
 
