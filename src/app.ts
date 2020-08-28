@@ -1,21 +1,30 @@
-import Ora from 'ora'
-import { getProjects } from './lib/get-projects'
-import { getStoryId } from './lib/get-story-id'
+import Ora from "ora";
+import { getProjects } from "./lib/get-projects";
+import { getStory } from "./lib/get-story";
+import { getStoryId } from "./lib/get-story-id";
+import { formatBranch } from "./lib/format-branch";
 
 export async function startApp() {
   const spinner = Ora({
-    text: 'Parsing story...',
-  })
+    text: "Parsing story...",
+  });
 
-  const [, , linkOrId] = process.argv
-  const storyId = getStoryId(linkOrId)
+  const [, , linkOrId] = process.argv;
+  const storyId = getStoryId(linkOrId);
 
-  spinner.succeed('Parsed story')
-  spinner.start('Fetching projects...')
+  spinner.succeed("Parsed story");
+  spinner.start("Fetching projects...");
 
-  const projects = await getProjects()
+  const projects = await getProjects();
 
-  spinner.succeed('Fetched projects')
+  spinner.succeed("Fetched projects");
+  spinner.start("Fetching story...");
 
-  console.log(JSON.stringify({ storyId, projects }, null, 2))
+  const story = await getStory(projects, storyId);
+
+  spinner.succeed("Fetched story");
+
+  const branch = formatBranch(story);
+
+  console.log(branch);
 }

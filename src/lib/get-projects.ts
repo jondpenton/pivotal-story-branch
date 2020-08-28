@@ -1,16 +1,19 @@
-import axios from 'axios'
+import axios from "axios";
 
-interface IProject {
-  id: number
-  name: string
+export interface IProject {
+  id: number;
+  name: string;
 }
 
 export async function getProjects(): Promise<IProject[]> {
-  const response = await axios.get<IProject[]>('https://www.pivotaltracker.com/services/v5/projects', {
-    headers: {
-      'X-TrackerToken': process.env.TOKEN,
-    },
-  })
+  const response = await axios.get<IProject[]>(
+    "https://www.pivotaltracker.com/services/v5/projects",
+    {
+      headers: {
+        "X-TrackerToken": process.env.TOKEN,
+      },
+    }
+  );
 
-  return response.data
+  return response.data;
 }
