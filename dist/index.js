@@ -4,8 +4,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = require("./app");
 require("dotenv").config();
 async function bootstrap() {
-    if (!process.env.TOKEN) {
-        throw new Error("TOKEN env is required. It can be found here: https://www.pivotaltracker.com/profile");
+    if (!process.env.PIVOTAL_TRACKER_TOKEN) {
+        throw new Error("PIVOTAL_TRACKER_TOKEN env is required. It can be found here: https://www.pivotaltracker.com/profile");
     }
     await app_1.startApp();
 }
