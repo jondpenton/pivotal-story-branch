@@ -1,3 +1,4 @@
+#! /usr/bin/env node
 import { startApp } from "./app";
 
 require("dotenv").config();
