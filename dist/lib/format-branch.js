@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.formatBranch = void 0;
 const slugify_1 = __importDefault(require("slugify"));
 function formatBranch(story) {
-    const characterLimit = process.env.CHARACTER_LIMIT
-        ? parseInt(process.env.CHARACTER_LIMIT, 10)
+    const characterLimit = process.env.PIVOTAL_TRACKER_BRANCH_MAX_LENGTH
+        ? parseInt(process.env.PIVOTAL_TRACKER_BRANCH_MAX_LENGTH, 10)
         : 50;
     const baseLength = `${story.story_type}/`.length + `-#${story.id}`.length;
     const remainingLength = characterLimit - baseLength;
@@ -18,8 +18,8 @@ function formatBranch(story) {
         return `${story.story_type}/${nameSlug}-#${story.id}`;
     }
     const nameWords = nameSlug.split("-");
-    const usedWords = [];
-    for (const word of nameWords) {
+    const usedWords = [nameWords[0]];
+    for (const word of nameWords.slice(1)) {
         if ([...usedWords, word].join("-").length > remainingLength) {
             break;
         }

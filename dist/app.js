@@ -15,7 +15,7 @@ async function startApp() {
     });
     const [, , linkOrId] = process.argv;
     const storyId = get_story_id_1.getStoryId(linkOrId);
-    spinner.succeed("Parsed story");
+    spinner.succeed("Parsed story id");
     spinner.start("Fetching projects...");
     const projects = await get_projects_1.getProjects();
     spinner.succeed("Fetched projects");
