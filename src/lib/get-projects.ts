@@ -10,7 +10,7 @@ export async function getProjects(): Promise<IProject[]> {
     "https://www.pivotaltracker.com/services/v5/projects",
     {
       headers: {
-        "X-TrackerToken": process.env.TOKEN,
+        "X-TrackerToken": process.env.PIVOTAL_TRACKER_TOKEN,
       },
     }
   );

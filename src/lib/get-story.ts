@@ -19,7 +19,7 @@ export async function getStory(
         `https://www.pivotaltracker.com/services/v5/projects/${project.id}/stories/${storyId}`,
         {
           headers: {
-            "X-TrackerToken": process.env.TOKEN,
+            "X-TrackerToken": process.env.PIVOTAL_TRACKER_TOKEN,
           },
         }
       );
