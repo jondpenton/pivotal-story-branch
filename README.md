@@ -1,6 +1,6 @@
 # Pivotal Tracker Story Branch Generator
 
-[Pivotal Tracker Story Branch Generator](https://yarnpkg.com/package/pivotal-story-branch) is a tool to automatically generate a branch name for a new story.
+[Pivotal Tracker Story Branch Generator](https://yarnpkg.com/package/pivotal-story-branch) is a tool to automatically generate a branch name for a new story in [Pivotal Tracker](https://www.pivotaltracker.com/).
 
 ## Installation
 
