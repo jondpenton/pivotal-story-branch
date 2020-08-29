@@ -1,6 +1,6 @@
 {
   "name": "pivotal-story-branch",
-  "version": "0.3.0",
+  "version": "0.5.0",
   "main": "./dist/index.js",
   "bin": {
     "psb": "./dist/index.js"
