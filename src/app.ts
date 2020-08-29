@@ -12,7 +12,7 @@ export async function startApp() {
   const [, , linkOrId] = process.argv;
   const storyId = getStoryId(linkOrId);
 
-  spinner.succeed("Parsed story");
+  spinner.succeed("Parsed story id");
   spinner.start("Fetching projects...");
 
   const projects = await getProjects();
