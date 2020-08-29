@@ -11,7 +11,7 @@ async function getStory(projects, storyId) {
         try {
             const response = await axios_1.default.get(`https://www.pivotaltracker.com/services/v5/projects/${project.id}/stories/${storyId}`, {
                 headers: {
-                    "X-TrackerToken": process.env.TOKEN,
+                    "X-TrackerToken": process.env.PIVOTAL_TRACKER_TOKEN,
                 },
             });
             story = response.data;
