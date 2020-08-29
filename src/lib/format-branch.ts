@@ -16,9 +16,9 @@ export function formatBranch(story: IStory): string {
   }
 
   const nameWords = nameSlug.split("-");
-  const usedWords: string[] = [];
+  const usedWords: string[] = [nameWords[0]];
 
-  for (const word of nameWords) {
+  for (const word of nameWords.slice(1)) {
     if ([...usedWords, word].join("-").length > remainingLength) {
       break;
     }
