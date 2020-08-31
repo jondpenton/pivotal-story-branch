@@ -13,6 +13,7 @@ function formatBranch(story) {
     const remainingLength = characterLimit - baseLength;
     const nameSlug = slugify_1.default(story.name.trim(), {
         lower: true,
+        strict: true,
     });
     if (nameSlug.length <= remainingLength) {
         return `${story.story_type}/${nameSlug}-#${story.id}`;

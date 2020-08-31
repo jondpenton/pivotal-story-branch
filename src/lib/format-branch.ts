@@ -9,6 +9,7 @@ export function formatBranch(story: IStory): string {
   const remainingLength = characterLimit - baseLength;
   const nameSlug = slugify(story.name.trim(), {
     lower: true,
+    strict: true,
   });
 
   if (nameSlug.length <= remainingLength) {
