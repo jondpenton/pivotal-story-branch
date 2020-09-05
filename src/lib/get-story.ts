@@ -11,8 +11,6 @@ export async function getStory(
   projects: IProject[],
   storyId: string
 ): Promise<IStory> {
-  let story: IStory | undefined;
-
   for (const project of projects) {
     try {
       const response = await axios.get<IStory>(
@@ -23,13 +21,9 @@ export async function getStory(
           },
         }
       );
-      story = response.data;
+      return response.data;
     } catch (err) {}
   }
 
-  if (!story) {
-    throw new Error("Unable to find story");
-  }
-
-  return story;
+  throw new Error("Unable to find story");
 }
