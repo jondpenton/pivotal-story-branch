@@ -2,7 +2,7 @@
   "name": "pivotal-story-branch",
   "description": "Pivotal Tracker Story Branch Generator is a tool to automatically generate a branch name for a new story in Pivotal Tracker.",
   "homepage": "https://github.com/jpenton/pivotal-story-branch",
-  "version": "0.6.1",
+  "version": "0.0.0-development",
   "main": "./dist/index.js",
   "bin": {
     "psb": "./dist/index.js"
@@ -11,7 +11,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node ./dist/index.js",
-    "dev": "nodemon -e ts --exec \"yarn build && yarn start\""
+    "dev": "nodemon -e ts --exec \"yarn build && yarn start\"",
+    "semantic-release": "semantic-release"
   },
   "dependencies": {
     "axios": "^0.20.0",
@@ -23,6 +24,11 @@
     "@types/axios": "^0.14.0",
     "@types/node": "^14.6.1",
     "nodemon": "^2.0.4",
-    "typescript": "^4.0.2"
+    "typescript": "^4.0.2",
+    "semantic-release": "^17.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jpenton/pivotal-story-branch.git"
   }
 }
