@@ -1,8 +1,8 @@
 version: 2
 jobs:
-  build:
+  semantic-relase:
     docker:
-      - image: 'circleci/node:latest'
+      - image: "circleci/node:latest"
     steps:
       - checkout
       - run:
@@ -11,3 +11,12 @@ jobs:
       - run:
           name: release
           command: npm run semantic-release || true
+
+workflows:
+  version: 2
+  publish:
+    jobs:
+      - semantic-release
+    filters:
+      branches:
+        only: master
