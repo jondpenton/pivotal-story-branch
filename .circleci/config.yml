@@ -16,7 +16,7 @@ workflows:
   version: 2
   publish:
     jobs:
-      semantic-release:
-        filters:
-          branches:
-            only: master
+      - semantic-release:
+          filters:
+            branches:
+              only: master
