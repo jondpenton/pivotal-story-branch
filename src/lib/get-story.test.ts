@@ -1,5 +1,4 @@
-import { server } from "../mocks/server";
-import { rest } from "../mocks/handlers";
+import { server, rest } from "../mocks/server";
 import { IStory, getStory } from "./get-story";
 import { IProject } from "./get-projects";
 
