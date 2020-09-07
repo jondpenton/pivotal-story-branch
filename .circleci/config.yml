@@ -1,22 +1,36 @@
 version: 2
 jobs:
-  semantic-relase:
+  test:
     docker:
       - image: "circleci/node:latest"
     steps:
       - checkout
       - run:
           name: install
-          command: npm install
+          command: yarn install
+      - run:
+          name: run tests
+          command: yarn test:ci
+  release:
+    docker:
+      - image: "circleci/node:latest"
+    steps:
+      - checkout
+      - run:
+          name: install
+          command: yarn install
       - run:
           name: release
-          command: npm run semantic-release || true
+          command: yarn semantic-release || true
 
 workflows:
   version: 2
-  publish:
+  test:
     jobs:
-      - semantic-release:
+      - test
+  release:
+    jobs:
+      - release:
           filters:
             branches:
               only: master
