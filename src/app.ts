@@ -4,13 +4,12 @@ import { getStory } from "./lib/get-story";
 import { getStoryId } from "./lib/get-story-id";
 import { formatBranch } from "./lib/format-branch";
 
-export async function startApp() {
+export async function startApp(link: string) {
   const spinner = Ora({
     text: "Parsing story...",
   });
 
-  const [, , linkOrId] = process.argv;
-  const storyId = getStoryId(linkOrId);
+  const storyId = getStoryId(link);
 
   spinner.succeed("Parsed story id");
   spinner.start("Fetching projects...");

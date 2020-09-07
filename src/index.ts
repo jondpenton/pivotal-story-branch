@@ -10,7 +10,9 @@ async function bootstrap() {
     );
   }
 
-  await startApp();
+  const link: string = process.argv[2];
+
+  await startApp(link);
 }
 
 bootstrap().catch((...args) => {
