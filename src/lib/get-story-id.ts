@@ -1,17 +1,10 @@
-export function getStoryId(linkOrId: string): string {
-  const linkRegex = /^https?:\/\/www\.pivotaltracker\.com\/story\/show\/(?<storyId>\d+)$/
-  const linkResult = linkRegex.exec(linkOrId)
+export function getStoryId(link: string): string {
+  const linkRegex = /^https?:\/\/www\.pivotaltracker\.com\/story\/show\/(?<storyId>\d+)$/;
+  const linkResult = linkRegex.exec(link);
 
-  if (linkResult?.groups?.['storyId']) {
-    return linkResult.groups['storyId']
+  if (!linkResult?.groups?.["storyId"]) {
+    throw new Error("Unable to parse story id");
   }
 
-  const idRegex = /^#(?<storyId>\d+)$/
-  const idResult = idRegex.exec(linkOrId)
-
-  if (idResult?.groups?.['storyId']) {
-    return idResult.groups['storyId']
-  }
-
-  throw new Error('Unable to parse story id')
+  return linkResult.groups["storyId"];
 }
