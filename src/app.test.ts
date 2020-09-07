@@ -18,6 +18,15 @@ const story: IStory = {
   name: "Story name",
   story_type: "feature",
 };
+let originalToken = process.env.PIVOTAL_TRACKER_TOKEN;
+
+beforeAll(() => {
+  process.env.PIVOTAL_TRACKER_TOKEN = "1234-1234-1234";
+});
+
+afterAll(() => {
+  process.env.PIVOTAL_TRACKER_TOKEN = originalToken;
+});
 
 it(`doesn't throw an error when expected responses are found`, async () => {
   server.use(
