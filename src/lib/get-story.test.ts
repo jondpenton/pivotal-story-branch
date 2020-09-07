@@ -13,6 +13,11 @@ const projects: IProject[] = [
     name: "My cool project",
   },
 ];
+let originalToken = process.env.PIVOTAL_TRACKER_TOKEN;
+
+beforeAll(() => {
+  process.env.PIVOTAL_TRACKER_TOKEN = "1234-1234-1234";
+});
 
 beforeEach(() => {
   server.use(
@@ -21,6 +26,10 @@ beforeEach(() => {
       (_req, res, ctx) => res(ctx.json(story))
     )
   );
+});
+
+afterAll(() => {
+  process.env.PIVOTAL_TRACKER_TOKEN = originalToken;
 });
 
 it("gets a story", async () => {
