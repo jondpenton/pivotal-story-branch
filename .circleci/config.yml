@@ -31,9 +31,22 @@ jobs:
           name: Check Commits
           command: |
             yarn commitlint
+  formatlint:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - restore_cache:
+        keys:
+          - v1-yarn-deps-{{ checksum "yarn.lock" }}
+          - v1-yarn-deps-
+      - run:
+          name: Check Code Formatting
+          command: |
+            yarn formatlint
   test:
     docker:
-      - image: "circleci/node:latest"
+      - image: 'circleci/node:latest'
     steps:
       - checkout
       - restore_cache:
@@ -46,7 +59,7 @@ jobs:
             yarn test:ci
   release:
     docker:
-      - image: "circleci/node:latest"
+      - image: 'circleci/node:latest'
     steps:
       - checkout
       - restore_cache:
@@ -64,6 +77,9 @@ workflows:
     jobs:
       - install
       - commitlint:
+          requires:
+            - install
+      - formatlint:
           requires:
             - install
       - test:
