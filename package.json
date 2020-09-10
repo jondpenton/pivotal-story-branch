@@ -14,7 +14,8 @@
     "dev": "nodemon -e ts --exec \"yarn build && yarn start\"",
     "semantic-release": "semantic-release",
     "test": "jest",
-    "test:ci": "jest --ci --coverage"
+    "test:ci": "jest --ci --coverage",
+    "commitlint": "commitlint --from HEAD~1 --to HEAD --verbose"
   },
   "dependencies": {
     "axios": "^0.20.0",
@@ -26,10 +27,13 @@
     "@babel/core": "^7.11.6",
     "@babel/preset-env": "^7.11.5",
     "@babel/preset-typescript": "^7.10.4",
+    "@commitlint/cli": "^9.1.2",
+    "@commitlint/config-conventional": "^9.1.2",
     "@types/axios": "^0.14.0",
     "@types/jest": "^26.0.13",
     "@types/node": "^14.6.1",
     "babel-jest": "^26.3.0",
+    "husky": "^4.3.0",
     "jest": "^26.4.2",
     "msw": "^0.20.5",
     "nodemon": "^2.0.4",

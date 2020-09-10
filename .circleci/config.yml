@@ -1,36 +1,80 @@
 version: 2
 jobs:
+  install:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-yarn-deps-{{ checksum "yarn.lock" }}
+            - v1-yarn-deps-
+      - run:
+          name: Install Dependencies
+          command: |
+            yarn install
+
+      - save_cache:
+          key: v1-yarn-deps-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+  commitlint:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-yarn-deps-{{ checksum "yarn.lock" }}
+            - v1-yarn-deps-
+      - run:
+          name: Check Commits
+          command: |
+            yarn commitlint
   test:
     docker:
       - image: "circleci/node:latest"
     steps:
       - checkout
-      - run:
-          name: install
-          command: yarn install
+      - restore_cache:
+          keys:
+            - v1-yarn-deps-{{ checksum "yarn.lock" }}
+            - v1-yarn-deps-
       - run:
           name: run tests
-          command: yarn test:ci
+          command: |
+            yarn test:ci
   release:
     docker:
       - image: "circleci/node:latest"
     steps:
       - checkout
-      - run:
-          name: install
-          command: yarn install
+      - restore_cache:
+          keys:
+            - v1-yarn-deps-{{ checksum "yarn.lock" }}
+            - v1-yarn-deps-
       - run:
           name: release
-          command: yarn semantic-release || true
+          command: |
+            yarn semantic-release || true
 
 workflows:
   version: 2
   test:
     jobs:
-      - test
+      - install
+      - commitlint:
+          requires:
+            - install
+      - test:
+          requires:
+            - install
   release:
     jobs:
-      - release:
+      - install:
           filters:
             branches:
               only: master
+      - release:
+          requires:
+            - install
