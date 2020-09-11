@@ -67,6 +67,10 @@ jobs:
             - v1-yarn-deps-{{ checksum "yarn.lock" }}
             - v1-yarn-deps-
       - run:
+          name: build
+          command: |
+            yarn build
+      - run:
           name: release
           command: |
             yarn semantic-release || true
