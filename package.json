@@ -5,7 +5,7 @@
   "version": "0.0.0-development",
   "main": "./dist/index.js",
   "bin": {
-    "psb": "./dist/index.js"
+    "psb": "./bin/run"
   },
   "license": "MIT",
   "scripts": {
@@ -19,6 +19,9 @@
     "formatlint": "prettier -c 'src/**/*.ts'"
   },
   "dependencies": {
+    "@oclif/command": "^1.8.0",
+    "@oclif/config": "^1.17.0",
+    "@oclif/plugin-help": "^3.2.0",
     "axios": "^0.20.0",
     "dotenv": "^8.2.0",
     "ora": "^5.0.0",
@@ -30,6 +33,7 @@
     "@babel/preset-typescript": "^7.10.4",
     "@commitlint/cli": "^9.1.2",
     "@commitlint/config-conventional": "^9.1.2",
+    "@oclif/dev-cli": "^1.22.2",
     "@types/axios": "^0.14.0",
     "@types/jest": "^26.0.13",
     "@types/node": "^14.6.1",
@@ -41,10 +45,21 @@
     "prettier": "^2.1.1",
     "pretty-quick": "^3.0.0",
     "semantic-release": "^17.1.1",
+    "ts-node": "^9.0.0",
     "typescript": "^4.0.2"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/jpenton/pivotal-story-branch.git"
-  }
+  },
+  "oclif": {
+    "bin": "psb"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/bin",
+    "/dist"
+  ]
 }
