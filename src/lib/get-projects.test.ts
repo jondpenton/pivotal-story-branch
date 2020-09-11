@@ -1,25 +1,25 @@
-import { server, rest } from '../mocks/server'
-import { IProject, getProjects } from './get-projects'
+import { server, rest } from "../mocks/server";
+import { IProject, getProjects } from "./get-projects";
 
-it('fetches projects from Pivotal Tracker API', async () => {
+it("fetches projects from Pivotal Tracker API", async () => {
   const projects: IProject[] = [
     {
       id: 123,
-      name: 'Some project',
+      name: "Some project",
     },
     {
       id: 124,
-      name: 'Another one',
+      name: "Another one",
     },
-  ]
+  ];
   server.use(
     rest.get(
-      'https://www.pivotaltracker.com/services/v5/projects',
+      "https://www.pivotaltracker.com/services/v5/projects",
       (_req, res, ctx) => res(ctx.json(projects))
     )
-  )
+  );
 
-  const fetchedProjects = await getProjects()
+  const fetchedProjects = await getProjects();
 
-  expect(fetchedProjects).toMatchObject(projects)
-})
+  expect(fetchedProjects).toMatchObject(projects);
+});

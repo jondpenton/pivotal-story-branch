@@ -1,50 +1,21 @@
-import { Command, flags } from '@oclif/command'
-import * as Parser from '@oclif/parser'
-import { getStoryId } from './lib/get-story-id'
-import Ora from 'ora'
-import { getProjects } from './lib/get-projects'
-import { getStory } from './lib/get-story'
-import { formatBranch } from './lib/format-branch'
+#! /usr/bin/env node
+import { startApp } from "./app";
 
-class PivotalStoryBranch extends Command {
-  static description = 'Generates a git branch name for a Pivotal Tracker story'
+require("dotenv").config();
 
-  static flags = {
-    // add --version flag to show CLI version
-    version: flags.version({ char: 'v' }),
-    help: flags.help({ char: 'h' }),
+async function bootstrap() {
+  if (!process.env.PIVOTAL_TRACKER_TOKEN) {
+    throw new Error(
+      "PIVOTAL_TRACKER_TOKEN env is required. It can be found here: https://www.pivotaltracker.com/profile"
+    );
   }
 
-  static args: Parser.args.Input = [
-    {
-      name: 'story_link',
-      parse(input) {
-        const storyId = getStoryId(input)
+  const link: string = process.argv[2];
 
-        return storyId
-      },
-      required: true,
-    },
-  ]
-
-  async run() {
-    const { args } = this.parse(PivotalStoryBranch)
-    const spinner = Ora({
-      text: 'Fetching projects...',
-    })
-    const projects = await getProjects()
-
-    spinner.succeed('Fetched projects')
-    spinner.start('Fetching story...')
-
-    const story = await getStory(projects, args.link)
-
-    spinner.succeed('Fetched story')
-
-    const branch = formatBranch(story)
-
-    this.log(branch)
-  }
+  await startApp(link);
 }
 
-export = PivotalStoryBranch
+bootstrap().catch((...args) => {
+  console.error(...args);
+  process.exit(1);
+});
