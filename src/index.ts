@@ -37,7 +37,7 @@ class PivotalStoryBranch extends Command {
     spinner.succeed('Fetched projects')
     spinner.start('Fetching story...')
 
-    const story = await getStory(projects, args.link)
+    const story = await getStory(projects, args.story_link)
 
     spinner.succeed('Fetched story')
 
