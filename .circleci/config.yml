@@ -18,32 +18,6 @@ jobs:
           key: v1-yarn-deps-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
-  commitlint:
-    docker:
-      - image: circleci/node:latest
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-yarn-deps-{{ checksum "yarn.lock" }}
-            - v1-yarn-deps-
-      - run:
-          name: Check Commits
-          command: |
-            yarn commitlint
-  formatlint:
-    docker:
-      - image: circleci/node:latest
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-yarn-deps-{{ checksum "yarn.lock" }}
-            - v1-yarn-deps-
-      - run:
-          name: Check Code Formatting
-          command: |
-            yarn formatlint
   test:
     docker:
       - image: 'circleci/node:latest'
@@ -53,6 +27,10 @@ jobs:
           keys:
             - v1-yarn-deps-{{ checksum "yarn.lock" }}
             - v1-yarn-deps-
+      - run:
+          name: run linting
+          command: |
+            yarn lint
       - run:
           name: run tests
           command: |
@@ -80,12 +58,6 @@ workflows:
   test:
     jobs:
       - install
-      - commitlint:
-          requires:
-            - install
-      - formatlint:
-          requires:
-            - install
       - test:
           requires:
             - install
@@ -95,6 +67,9 @@ workflows:
           filters:
             branches:
               only: master
-      - release:
+      - test:
           requires:
             - install
+      - release:
+          requires:
+            - test
