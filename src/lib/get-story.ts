@@ -7,17 +7,22 @@ export interface IStory {
   story_type: 'feature' | 'bug' | 'chore' | 'release'
 }
 
-export async function getStory(
-  projects: IProject[],
+export async function getStory({
+  projects,
+  storyId,
+  token,
+}: {
+  projects: IProject[]
   storyId: string
-): Promise<IStory> {
+  token: string
+}): Promise<IStory> {
   for (const project of projects) {
     try {
       const response = await axios.get<IStory>(
         `https://www.pivotaltracker.com/services/v5/projects/${project.id}/stories/${storyId}`,
         {
           headers: {
-            'X-TrackerToken': process.env.PIVOTAL_TRACKER_TOKEN,
+            'X-TrackerToken': token,
           },
         }
       )

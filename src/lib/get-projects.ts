@@ -5,12 +5,14 @@ export interface IProject {
   name: string
 }
 
-export async function getProjects(): Promise<IProject[]> {
+export async function getProjects({
+  token,
+}: Record<'token', string>): Promise<IProject[]> {
   const response = await axios.get<IProject[]>(
     'https://www.pivotaltracker.com/services/v5/projects',
     {
       headers: {
-        'X-TrackerToken': process.env.PIVOTAL_TRACKER_TOKEN,
+        'X-TrackerToken': token,
       },
     }
   )
