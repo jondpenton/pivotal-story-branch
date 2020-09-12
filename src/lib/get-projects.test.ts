@@ -19,7 +19,7 @@ it('fetches projects from Pivotal Tracker API', async () => {
     )
   )
 
-  const fetchedProjects = await getProjects()
+  const fetchedProjects = await getProjects({ token: '' })
 
   expect(fetchedProjects).toMatchObject(projects)
 })
