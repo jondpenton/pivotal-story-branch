@@ -10,5 +10,5 @@ if (dev) {
 }
 
 require(`../${dev ? 'src' : 'dist'}`)
-  .run()
+  .default.run()
   .catch(require('@oclif/errors/handle'))

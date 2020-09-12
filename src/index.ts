@@ -47,4 +47,4 @@ class PivotalStoryBranch extends Command {
   }
 }
 
-export = PivotalStoryBranch
+export default PivotalStoryBranch
