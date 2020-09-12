@@ -19,7 +19,11 @@ class PivotalStoryBranch extends Command {
     // add --version flag to show CLI version
     version: flags.version({ char: 'v' }),
     help: flags.help({ char: 'h' }),
-    token: flags.string({ char: 't' }),
+    token: flags.string({
+      char: 't',
+      description:
+        'Token used for requests to Pivotal Tracker. This value will be saved for further use',
+    }),
   }
 
   static args: Parser.args.Input = [

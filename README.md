@@ -30,7 +30,6 @@ psb <link>
 
 ```bash
 $ psb https://www.pivotaltracker.com/story/show/12345678
-✔ Parsed story
 ✔ Fetched projects
 ✔ Fetched story
 feature/transform-all-text-coming-into-#12345678
@@ -38,7 +37,7 @@ feature/transform-all-text-coming-into-#12345678
 
 ### Additional Info
 
-The statuses shown by the tool ("Parsed story", "Fetched projects", etc..) are sent to stderr, while only the branch name is sent to stdout. This means you can use this tool in combination with other commands like:
+The statuses shown by the tool are sent to stderr, while only the branch name is sent to stdout. This means you can use this tool in combination with other commands like:
 
 ```bash
 # Copy to clipboard
@@ -47,6 +46,12 @@ $ psb https://www.pivotaltracker.com/story/show/12345678 | pbcopy
 # Checkout new branch
 $ git checkout -b $(psb https://www.pivotaltracker.com/story/show/12345678)
 ```
+
+## Options
+
+### --token (-t)
+
+Token used for requests to Pivotal Tracker. This value will be saved for further use, so it only needs to be provided once.
 
 ## Configuration
 
