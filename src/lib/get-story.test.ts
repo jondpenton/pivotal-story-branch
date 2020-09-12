@@ -33,13 +33,17 @@ afterAll(() => {
 })
 
 it('gets a story', async () => {
-  const fetchedStory = await getStory(projects, '12345678')
+  const fetchedStory = await getStory({
+    projects,
+    storyId: '12345678',
+    token: '',
+  })
 
   expect(fetchedStory).toMatchObject(story)
 })
 
 it('throws an error if story not found', async () => {
-  await expect(getStory(projects, '12345679')).rejects.toThrowError(
-    'Unable to find story'
-  )
+  await expect(
+    getStory({ projects, storyId: '12345679', token: '' })
+  ).rejects.toThrowError('Unable to find story')
 })
