@@ -1,6 +1,7 @@
 import { Command, flags } from '@oclif/command'
 import { IConfig } from '@oclif/config'
 import * as Parser from '@oclif/parser'
+import { exec } from 'child_process'
 import { promises as fs } from 'fs'
 import Ora from 'ora'
 import * as path from 'path'
@@ -25,6 +26,10 @@ class PivotalStoryBranch extends Command {
       char: 't',
       description:
         'Token used for requests to Pivotal Tracker. This value will be saved for further use',
+    }),
+    switch: flags.boolean({
+      char: 's',
+      description: 'Automatically switches to branch',
     }),
   }
 
@@ -115,7 +120,63 @@ class PivotalStoryBranch extends Command {
 
     const branch = formatBranch(story)
 
-    this.log(branch)
+    if (flags.switch) {
+      await this.switchToBranch({ branch })
+    } else {
+      this.log(branch)
+    }
+  }
+
+  async switchToBranch({
+    branch,
+    newBranch = false,
+    finalLog = true,
+  }: {
+    branch: string
+    newBranch?: boolean
+    finalLog?: boolean
+  }) {
+    if (newBranch) {
+      this.spinner.start(`Creating branch ${branch}`)
+    } else {
+      this.spinner.start(`Switching to branch ${branch}`)
+    }
+
+    let baseCmd = 'git checkout'
+
+    if (newBranch) {
+      baseCmd += ' -b'
+    }
+
+    await new Promise((resolve, reject) => {
+      exec(`${baseCmd} ${branch}`, async (error) => {
+        if (error) {
+          if (newBranch) {
+            this.spinner.fail('Unable to create new branch')
+            this.log(branch)
+            reject()
+            return
+          }
+
+          this.spinner.info(`Branch ${branch} doesn't exist.`)
+          finalLog = false
+          await this.switchToBranch({
+            branch,
+            newBranch: true,
+          })
+        }
+
+        resolve()
+      })
+    })
+
+    if (finalLog) {
+      if (newBranch) {
+        this.spinner.succeed(`Created branch ${branch}`)
+      } else {
+        this.spinner.succeed(`Switched to branch ${branch}`)
+      }
+    }
   }
 }
 
