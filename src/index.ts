@@ -1,22 +1,24 @@
 import { Command, flags } from '@oclif/command'
+import { IConfig } from '@oclif/config'
 import * as Parser from '@oclif/parser'
-import { getStoryId } from './lib/get-story-id'
+import { promises as fs } from 'fs'
 import Ora from 'ora'
+import * as path from 'path'
+import { formatBranch } from './lib/format-branch'
 import { getProjects } from './lib/get-projects'
 import { getStory } from './lib/get-story'
-import { formatBranch } from './lib/format-branch'
-import { promises as fs } from 'fs'
-import * as path from 'path'
+import { getStoryId } from './lib/get-story-id'
 
-interface IConfig {
+interface IUserConfig {
   token?: string
 }
 
 class PivotalStoryBranch extends Command {
+  private spinner: Ora.Ora
+
   static description = 'Generates a git branch name for a Pivotal Tracker story'
 
   static flags = {
-    // add --version flag to show CLI version
     version: flags.version({ char: 'v' }),
     help: flags.help({ char: 'h' }),
     token: flags.string({
@@ -38,6 +40,12 @@ class PivotalStoryBranch extends Command {
     },
   ]
 
+  constructor(argv: string[], config: IConfig) {
+    super(argv, config)
+
+    this.spinner = Ora()
+  }
+
   async getConfig() {
     try {
       await fs.readdir(this.config.configDir)
@@ -46,7 +54,7 @@ class PivotalStoryBranch extends Command {
     }
 
     const configPath = this.getConfigPath()
-    let userConfig: IConfig
+    let userConfig: IUserConfig
 
     try {
       const rawUserConfig = await fs.readFile(configPath)
@@ -74,7 +82,7 @@ class PivotalStoryBranch extends Command {
 
   async run() {
     const { args, flags } = this.parse(PivotalStoryBranch)
-    const spinner = Ora({
+    this.spinner = Ora({
       text: 'Fetching projects...',
     })
     let token: string | undefined = process.env.PIVOTAL_TRACKER_TOKEN
@@ -98,12 +106,12 @@ class PivotalStoryBranch extends Command {
 
     const projects = await getProjects({ token })
 
-    spinner.succeed('Fetched projects')
-    spinner.start('Fetching story...')
+    this.spinner.succeed('Fetched projects')
+    this.spinner.start('Fetching story...')
 
     const story = await getStory({ token, projects, storyId: args.story_link })
 
-    spinner.succeed('Fetched story')
+    this.spinner.succeed('Fetched story')
 
     const branch = formatBranch(story)
 
