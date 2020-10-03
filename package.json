@@ -44,6 +44,7 @@
     "msw": "^0.20.5",
     "nodemon": "^2.0.4",
     "npm-run-all": "^4.1.5",
+    "oclif": "^1.16.1",
     "prettier": "^2.1.1",
     "pretty-quick": "^3.0.0",
     "semantic-release": "^17.1.1",
@@ -55,7 +56,11 @@
     "url": "https://github.com/jpenton/pivotal-story-branch.git"
   },
   "oclif": {
-    "bin": "psb"
+    "bin": "psb",
+    "commands": "./dist/commands",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
   },
   "engines": {
     "node": ">=8.0.0"

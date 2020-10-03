@@ -1,183 +1,157 @@
-import { Command, flags } from '@oclif/command'
-import { IConfig } from '@oclif/config'
-import * as Parser from '@oclif/parser'
-import { exec } from 'child_process'
-import { promises as fs } from 'fs'
-import Ora from 'ora'
-import * as path from 'path'
-import { formatBranch } from './lib/format-branch'
-import { getProjects } from './lib/get-projects'
-import { getStory } from './lib/get-story'
-import { getStoryId } from './lib/get-story-id'
+export { run } from '@oclif/command'
 
-interface IUserConfig {
-  token?: string
-}
+// import { Command, flags } from '@oclif/command'
+// import { IConfig } from '@oclif/config'
+// import * as Parser from '@oclif/parser'
+// import { exec } from 'child_process'
+// import { promises as fs } from 'fs'
+// import Ora from 'ora'
+// import * as path from 'path'
+// import { formatBranch } from './lib/format-branch'
+// import { getProjects } from './lib/get-projects'
+// import { getStory } from './lib/get-story'
+// import { getStoryId } from './lib/get-story-id'
 
-class PivotalStoryBranch extends Command {
-  private spinner: Ora.Ora
+// class PivotalStoryBranch extends Command {
+//   private spinner: Ora.Ora
 
-  static description = 'Generates a git branch name for a Pivotal Tracker story'
+//   static description = 'Generates a git branch name for a Pivotal Tracker story'
 
-  static flags = {
-    version: flags.version({ char: 'v' }),
-    help: flags.help({ char: 'h' }),
-    token: flags.string({
-      char: 't',
-      description:
-        'Token used for requests to Pivotal Tracker. This value will be saved for further use',
-    }),
-    switch: flags.boolean({
-      char: 's',
-      description: 'Automatically switches to branch',
-    }),
-  }
+//   static flags = {
+//     version: flags.version({ char: 'v' }),
+//     help: flags.help({ char: 'h' }),
+//     token: flags.string({
+//       char: 't',
+//       description:
+//         'Token used for requests to Pivotal Tracker. This value will be saved for further use',
+//     }),
+//     switch: flags.boolean({
+//       char: 's',
+//       description: 'Automatically switches to branch',
+//     }),
+//   }
 
-  static args: Parser.args.Input = [
-    {
-      name: 'story_link',
-      parse(input) {
-        const storyId = getStoryId(input)
+//   static args: Parser.args.Input = [
+//     {
+//       name: 'story_link',
+//       parse(input) {
+//         const storyId = getStoryId(input)
 
-        return storyId
-      },
-      required: true,
-    },
-  ]
+//         return storyId
+//       },
+//       required: true,
+//     },
+//   ]
 
-  constructor(argv: string[], config: IConfig) {
-    super(argv, config)
+//   constructor(argv: string[], config: IConfig) {
+//     super(argv, config)
 
-    this.spinner = Ora()
-  }
+//     this.spinner = Ora()
+//   }
 
-  async getConfig() {
-    try {
-      await fs.readdir(this.config.configDir)
-    } catch (err) {
-      await fs.mkdir(this.config.configDir, { recursive: true })
-    }
+//   async updateToken(token: string) {
+//     const userConfig = await this.getConfig()
 
-    const configPath = this.getConfigPath()
-    let userConfig: IUserConfig
+//     userConfig.token = token
 
-    try {
-      const rawUserConfig = await fs.readFile(configPath)
-      userConfig = JSON.parse(rawUserConfig.toString())
-    } catch (err) {
-      userConfig = {}
-    }
+//     const configPath = this.getConfigPath()
 
-    return userConfig
-  }
+//     await fs.writeFile(configPath, JSON.stringify(userConfig))
+//   }
 
-  getConfigPath() {
-    return path.join(this.config.configDir, './config.json')
-  }
+//   async run() {
+//     const { args, flags } = this.parse(PivotalStoryBranch)
+//     this.spinner = Ora({
+//       text: 'Fetching projects...',
+//     })
+//     let token: string | undefined = process.env.PIVOTAL_TRACKER_TOKEN
 
-  async updateToken(token: string) {
-    const userConfig = await this.getConfig()
+//     if (!token) {
+//       if (flags.token) {
+//         await this.updateToken(flags.token)
+//         token = flags.token
+//       } else {
+//         const config = await this.getConfig()
 
-    userConfig.token = token
+//         if (config.token) {
+//           token = config.token
+//         } else if (!token) {
+//           throw new Error(
+//             'Unable to find token. It should be passed in through the token flag (--token) or the PIVOTAL_TRACKER_TOKEN environment variable.'
+//           )
+//         }
+//       }
+//     }
 
-    const configPath = this.getConfigPath()
+//     const projects = await getProjects({ token })
 
-    await fs.writeFile(configPath, JSON.stringify(userConfig))
-  }
+//     this.spinner.succeed('Fetched projects')
+//     this.spinner.start('Fetching story...')
 
-  async run() {
-    const { args, flags } = this.parse(PivotalStoryBranch)
-    this.spinner = Ora({
-      text: 'Fetching projects...',
-    })
-    let token: string | undefined = process.env.PIVOTAL_TRACKER_TOKEN
+//     const story = await getStory({ token, projects, storyId: args.story_link })
 
-    if (!token) {
-      if (flags.token) {
-        await this.updateToken(flags.token)
-        token = flags.token
-      } else {
-        const config = await this.getConfig()
+//     this.spinner.succeed('Fetched story')
 
-        if (config.token) {
-          token = config.token
-        } else if (!token) {
-          throw new Error(
-            'Unable to find token. It should be passed in through the token flag (--token) or the PIVOTAL_TRACKER_TOKEN environment variable.'
-          )
-        }
-      }
-    }
+//     const branch = formatBranch(story)
 
-    const projects = await getProjects({ token })
+//     if (flags.switch) {
+//       await this.switchToBranch({ branch })
+//     } else {
+//       this.log(branch)
+//     }
+//   }
 
-    this.spinner.succeed('Fetched projects')
-    this.spinner.start('Fetching story...')
+//   async switchToBranch({
+//     branch,
+//     newBranch = false,
+//     finalLog = true,
+//   }: {
+//     branch: string
+//     newBranch?: boolean
+//     finalLog?: boolean
+//   }) {
+//     if (newBranch) {
+//       this.spinner.start(`Creating branch ${branch}`)
+//     } else {
+//       this.spinner.start(`Switching to branch ${branch}`)
+//     }
 
-    const story = await getStory({ token, projects, storyId: args.story_link })
+//     let baseCmd = 'git checkout'
 
-    this.spinner.succeed('Fetched story')
+//     if (newBranch) {
+//       baseCmd += ' -b'
+//     }
 
-    const branch = formatBranch(story)
+//     await new Promise((resolve, reject) => {
+//       exec(`${baseCmd} ${branch}`, async (error) => {
+//         if (error) {
+//           if (newBranch) {
+//             this.spinner.fail('Unable to create new branch')
+//             this.log(branch)
+//             reject()
+//             return
+//           }
 
-    if (flags.switch) {
-      await this.switchToBranch({ branch })
-    } else {
-      this.log(branch)
-    }
-  }
+//           this.spinner.info(`Branch ${branch} doesn't exist.`)
+//           finalLog = false
+//           await this.switchToBranch({
+//             branch,
+//             newBranch: true,
+//           })
+//         }
 
-  async switchToBranch({
-    branch,
-    newBranch = false,
-    finalLog = true,
-  }: {
-    branch: string
-    newBranch?: boolean
-    finalLog?: boolean
-  }) {
-    if (newBranch) {
-      this.spinner.start(`Creating branch ${branch}`)
-    } else {
-      this.spinner.start(`Switching to branch ${branch}`)
-    }
+//         resolve()
+//       })
+//     })
 
-    let baseCmd = 'git checkout'
+//     if (finalLog) {
+//       if (newBranch) {
+//         this.spinner.succeed(`Created branch ${branch}`)
+//       } else {
+//         this.spinner.succeed(`Switched to branch ${branch}`)
+//       }
+//     }
+//   }
+// }
 
-    if (newBranch) {
-      baseCmd += ' -b'
-    }
-
-    await new Promise((resolve, reject) => {
-      exec(`${baseCmd} ${branch}`, async (error) => {
-        if (error) {
-          if (newBranch) {
-            this.spinner.fail('Unable to create new branch')
-            this.log(branch)
-            reject()
-            return
-          }
-
-          this.spinner.info(`Branch ${branch} doesn't exist.`)
-          finalLog = false
-          await this.switchToBranch({
-            branch,
-            newBranch: true,
-          })
-        }
-
-        resolve()
-      })
-    })
-
-    if (finalLog) {
-      if (newBranch) {
-        this.spinner.succeed(`Created branch ${branch}`)
-      } else {
-        this.spinner.succeed(`Switched to branch ${branch}`)
-      }
-    }
-  }
-}
-
-export default PivotalStoryBranch
+// export default PivotalStoryBranch
