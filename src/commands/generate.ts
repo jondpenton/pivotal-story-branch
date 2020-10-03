@@ -31,9 +31,6 @@ class Generate extends Command {
 
   async run() {
     const { args } = this.parse(Generate)
-    this.spinner = Ora({
-      text: 'Fetching projects...',
-    })
     const { token } = await this.getConfig()
 
     if (!token) {
@@ -42,19 +39,39 @@ class Generate extends Command {
       )
     }
 
-    const projects = await getProjects({ token })
-
-    this.spinner.succeed('Fetched projects')
-    this.spinner.start('Fetching story...')
-
-    const story = await getStory({ token, projects, storyId: args.story_link })
-
-    this.spinner.succeed('Fetched story')
-
-    const branch = formatBranch(story)
+    const branch = await runGenerate({
+      spinner: this.spinner,
+      token,
+      storyId: args.story_link,
+    })
 
     this.log(branch)
   }
 }
 
+async function runGenerate({
+  spinner,
+  token,
+  storyId,
+}: {
+  spinner?: Ora.Ora
+  token: string
+  storyId: number
+}): Promise<string> {
+  spinner?.start('Fetching projects...')
+  const projects = await getProjects({ token })
+
+  spinner?.succeed('Fetched projects')
+  spinner?.start('Fetching story...')
+
+  const story = await getStory({ token, projects, storyId })
+
+  spinner?.succeed('Fetched story')
+
+  const branch = formatBranch(story)
+
+  return branch
+}
+
 export default Generate
+export { runGenerate }
