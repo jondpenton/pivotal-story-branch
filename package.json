@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf ./dist/ && tsc",
     "start": "node ./dist/index.js",
     "dev": "nodemon -e ts --exec \"yarn build && yarn start\"",
     "semantic-release": "semantic-release",
@@ -35,15 +35,18 @@
     "@commitlint/cli": "^9.1.2",
     "@commitlint/config-conventional": "^9.1.2",
     "@oclif/dev-cli": "^1.22.2",
+    "@oclif/test": "^1.2.7",
     "@types/axios": "^0.14.0",
     "@types/jest": "^26.0.13",
     "@types/node": "^14.6.1",
     "babel-jest": "^26.3.0",
+    "chai": "^4.2.0",
     "husky": "^4.3.0",
     "jest": "^26.4.2",
     "msw": "^0.20.5",
     "nodemon": "^2.0.4",
     "npm-run-all": "^4.1.5",
+    "oclif": "^1.16.1",
     "prettier": "^2.1.1",
     "pretty-quick": "^3.0.0",
     "semantic-release": "^17.1.1",
@@ -55,7 +58,11 @@
     "url": "https://github.com/jpenton/pivotal-story-branch.git"
   },
   "oclif": {
-    "bin": "psb"
+    "bin": "psb",
+    "commands": "./dist/commands",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
   },
   "engines": {
     "node": ">=8.0.0"
