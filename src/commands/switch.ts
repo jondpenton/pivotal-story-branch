@@ -14,7 +14,6 @@ class Switch extends Command {
       name: 'branch_or_story_link',
       description: 'Branch name or link to Pivotal Tracker story',
       required: true,
-      parse: getStoryId,
     },
   ]
 
