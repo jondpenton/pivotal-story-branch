@@ -18,21 +18,140 @@ yarn global add pivotal-story-branch
 
 You will need to grab the API token from [your profile](https://www.pivotaltracker.com/profile) and set it to the environment variable `PIVOTAL_TRACKER_TOKEN`.
 
-## Usage
+## Commands
 
 Copy the link of your story use it like so:
 
 ```bash
-psb <link>
+Pivotal Tracker Story Branch Generator is a tool to automatically generate a branch name for a new story in Pivotal Tracker.
+
+USAGE
+  $ psb [COMMAND]
+
+TOPICS
+  config  reads the configuration
+
+COMMANDS
+  config    reads the configuration
+  generate  generates a branch name for a Pivotal Tracker story
+  help      display help for psb
+  switch    switches branch to generated Pivotal Tracker story branch
 ```
 
-### Example
+### psb config
 
 ```bash
-$ psb https://www.pivotaltracker.com/story/show/12345678
+reads the configuration
+
+USAGE
+  $ psb config
+
+COMMANDS
+  config:remove  Removes a key from the configuration
+  config:set     Sets a value in the configuration
+```
+
+#### Example
+
+```bash
+$ psb config
+Configuration:
+{
+  "token": "104e73e8-6196-4202-a8de-80de34b14f03"
+}
+```
+
+### psb config:remove
+
+```bash
+Removes a key from the configuration
+
+USAGE
+  $ psb config:remove KEY
+
+ARGUMENTS
+  KEY  Key to remove from configuration
+```
+
+#### Example
+
+```bash
+$ psb config:remove token
+
+$ psb config
+Configuration:
+{}
+```
+
+### psb config:set
+
+```bash
+Sets a value in the configuration
+
+USAGE
+  $ psb config:set KEY VALUE
+
+ARGUMENTS
+  KEY    Key the value is set under in configuration
+  VALUE  Value that is set under key in configuration
+```
+
+#### Example
+
+```bash
+$ psb config:set token abc
+
+$ psb config
+Configuration:
+{
+  "token": "abc"
+}
+```
+
+### psb generate
+
+```bash
+generates a branch name for a Pivotal Tracker story
+
+USAGE
+  $ psb generate STORY_LINK
+
+ARGUMENTS
+  STORY_LINK  Link to Pivotal Tracker story
+
+ALIASES
+  $ psb gen
+```
+
+#### Example
+
+```bash
+$ psb generate https://www.pivotaltracker.com/story/show/12345678
 ✔ Fetched projects
 ✔ Fetched story
-feature/transform-all-text-coming-into-#12345678
+feature/story-name-#12345678
+```
+
+### psb switch
+
+```bash
+switches branch to generated Pivotal Tracker story branch
+
+USAGE
+  $ psb switch BRANCH_OR_STORY_LINK
+
+ARGUMENTS
+  BRANCH_OR_STORY_LINK  Branch name or link to Pivotal Tracker story
+```
+
+#### Example
+
+```bash
+$ psb switch https://www.pivotaltracker.com/story/show/12345678
+✔ Fetched projects
+✔ Fetched story
+ℹ Branch feature/story-name-#12345678 doesn't exist.
+✔ Created branch feature/story-name-#12345678
 ```
 
 ### Additional Info
@@ -41,17 +160,8 @@ The statuses shown by the tool are sent to stderr, while only the branch name is
 
 ```bash
 # Copy to clipboard
-$ psb https://www.pivotaltracker.com/story/show/12345678 | pbcopy
-
-# Checkout new branch
-$ git checkout -b $(psb https://www.pivotaltracker.com/story/show/12345678)
+$ psb gen https://www.pivotaltracker.com/story/show/12345678 | pbcopy
 ```
-
-## Options
-
-### --token (-t)
-
-Token used for requests to Pivotal Tracker. This value will be saved for further use, so it only needs to be provided once.
 
 ## Configuration
 
