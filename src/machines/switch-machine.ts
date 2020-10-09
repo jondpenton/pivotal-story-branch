@@ -27,7 +27,7 @@ async function branchExists(ctx: SwitchContext): Promise<boolean> {
   ctx.spinner.start(`Checking if branch ${ctx.branch} exists...`)
 
   const output = await new Promise<string>((resolve, reject) => {
-    exec(`git branch --list ${ctx.branch}`, (err, stdout) => {
+    exec(`git fetch && git branch --list ${ctx.branch}`, (err, stdout) => {
       if (err) {
         ctx.spinner.fail(`Failed to check branch ${ctx.branch}`)
         reject(err)
@@ -46,7 +46,7 @@ async function checkoutBranch(ctx: SwitchContext): Promise<void> {
   ctx.spinner.start(`Switching to branch ${ctx.branch}...`)
 
   await new Promise<void>((resolve, reject) => {
-    exec(`git checkout ${ctx.branch}`, (err) => {
+    exec(`git checkout ${ctx.branch} && git pull`, (err) => {
       if (err) {
         ctx.spinner.fail(`Failed to switch to branch ${ctx.branch}`)
         reject(err)
@@ -64,7 +64,7 @@ async function createBranch(ctx: SwitchContext): Promise<void> {
   ctx.spinner.start(`Creating branch ${ctx.branch}...`)
 
   await new Promise<void>((resolve, reject) => {
-    exec(`git checkout -b ${ctx.branch}`, (err) => {
+    exec(`git pull && git checkout -b ${ctx.branch}`, (err) => {
       if (err) {
         ctx.spinner.fail(`Failed to create branch ${ctx.branch}`)
         reject(err)
