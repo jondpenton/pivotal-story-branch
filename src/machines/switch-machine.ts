@@ -88,24 +88,22 @@ const switchMachine = createMachine<SwitchContext>({
   initial: SwitchState.Initial,
   states: {
     [SwitchState.Initial]: {
-      on: {
-        '': [
-          {
-            cond: branchInContext,
-            target: SwitchState.VerifyBranch,
-          },
-          {
-            cond: storyIdInContext,
-            target: SwitchState.GenerateBranch,
-          },
-          {
-            target: SwitchState.Final,
-            actions: [
-              (ctx) => ctx.spinner.fail('Failed to find branch or story id'),
-            ],
-          },
-        ],
-      },
+      always: [
+        {
+          cond: branchInContext,
+          target: SwitchState.VerifyBranch,
+        },
+        {
+          cond: storyIdInContext,
+          target: SwitchState.GenerateBranch,
+        },
+        {
+          target: SwitchState.Final,
+          actions: [
+            (ctx) => ctx.spinner.fail('Failed to find branch or story id'),
+          ],
+        },
+      ],
     },
     [SwitchState.GenerateBranch]: {
       invoke: {
