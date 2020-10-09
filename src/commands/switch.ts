@@ -11,8 +11,8 @@ class Switch extends Command {
 
   static args: Parser.args.Input = [
     {
-      name: 'story_link',
-      description: 'Link to Pivotal Tracker story',
+      name: 'branch_or_story_link',
+      description: 'Branch name or link to Pivotal Tracker story',
       required: true,
       parse: getStoryId,
     },
@@ -28,11 +28,21 @@ class Switch extends Command {
       )
     }
 
+    let branch: string | undefined
+    let storyId: string | undefined
+
+    try {
+      storyId = getStoryId(args.branch_or_story_link)
+    } catch (err) {
+      branch = args.branch_or_story_link
+    }
+
     interpret(
       switchMachine.withContext({
         spinner: Ora(),
-        storyId: args.story_link,
+        storyId,
         token,
+        branch,
       })
     ).start()
   }

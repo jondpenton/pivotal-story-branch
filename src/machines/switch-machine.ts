@@ -9,17 +9,18 @@ import {
 import { runGenerate } from '../commands/generate'
 
 enum SwitchState {
-  Initial = 'Initial',
-  VerifyBranch = 'VerifyBranch',
-  CheckoutBranch = 'CheckoutBranch',
-  CreateBranch = 'CreateBranch',
-  Final = 'Final',
+  Initial = 'INITIAL',
+  GenerateBranch = 'GENERATE_BRANCH',
+  VerifyBranch = 'VERIFY_BRANCH',
+  CheckoutBranch = 'CHECKOUT_BRANCH',
+  CreateBranch = 'CREATE_BRANCH',
+  Final = 'FINAL',
 }
 
 interface SwitchContext {
   branch?: string
   spinner: Ora
-  storyId: number
+  storyId?: string
   token: string
 }
 
@@ -79,19 +80,41 @@ async function createBranch(ctx: SwitchContext): Promise<void> {
 
 const isTruthy = (_ctx: SwitchContext, event: DoneInvokeEvent<unknown>) =>
   !!event.data
+const branchInContext = (ctx: SwitchContext) => !!ctx.branch
+const storyIdInContext = (ctx: SwitchContext) => !!ctx.storyId
 
 const switchMachine = createMachine<SwitchContext>({
   id: 'switch',
   initial: SwitchState.Initial,
   states: {
     [SwitchState.Initial]: {
+      on: {
+        '': [
+          {
+            cond: branchInContext,
+            target: SwitchState.VerifyBranch,
+          },
+          {
+            cond: storyIdInContext,
+            target: SwitchState.GenerateBranch,
+          },
+          {
+            target: SwitchState.Final,
+            actions: [
+              (ctx) => ctx.spinner.fail('Failed to find branch or story id'),
+            ],
+          },
+        ],
+      },
+    },
+    [SwitchState.GenerateBranch]: {
       invoke: {
         id: 'getBranch',
         src: (ctx) =>
           runGenerate({
             spinner: ctx.spinner,
             token: ctx.token,
-            storyId: ctx.storyId,
+            storyId: ctx.storyId!,
           }),
         onDone: {
           actions: [assign({ branch: (_ctx, event) => event.data })],

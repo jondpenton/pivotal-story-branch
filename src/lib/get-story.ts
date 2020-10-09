@@ -13,7 +13,7 @@ export async function getStory({
   token,
 }: {
   projects: IProject[]
-  storyId: number
+  storyId: string
   token: string
 }): Promise<IStory> {
   for (const project of projects) {
