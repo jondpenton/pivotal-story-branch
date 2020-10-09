@@ -89,7 +89,7 @@ test
   .catch((err) =>
     expect(
       err.message.startsWith(`Missing 1 required arg:
-story_link`)
+branch_or_story_link`)
     ).toBeTruthy()
   )
-  .it(`throws error if story_link is not provided`)
+  .it(`throws error if branch or story link not provided`)

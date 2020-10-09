@@ -56,7 +56,7 @@ async function runGenerate({
 }: {
   spinner?: Ora.Ora
   token: string
-  storyId: number
+  storyId: string
 }): Promise<string> {
   spinner?.start('Fetching projects...')
   const projects = await getProjects({ token })
