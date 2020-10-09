@@ -9,6 +9,7 @@ const callbackMock = jest
   .mockReturnValueOnce([])
 
 test
+  .skip()
   .stub(
     fs,
     'readdir',
@@ -46,6 +47,7 @@ test
   })
 
 test
+  .skip()
   .stub(
     fs,
     'readdir',
