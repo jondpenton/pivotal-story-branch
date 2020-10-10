@@ -14,6 +14,8 @@ enum SwitchState {
   VerifyBranch = 'VERIFY_BRANCH',
   CheckoutBranch = 'CHECKOUT_BRANCH',
   CreateBranch = 'CREATE_BRANCH',
+  PullChanges = 'PULL_CHANGES',
+  VerifyRemoteBranch = 'VERIFY_REMOTE_BRANCH',
   Final = 'FINAL',
 }
 
@@ -38,8 +40,17 @@ async function branchExists(ctx: SwitchContext): Promise<boolean> {
       resolve(stdout)
     })
   })
+  const isLocal = !!output
 
-  return !!output
+  if (!isLocal) {
+    const isRemote = await remoteBranchExists(ctx)
+
+    if (isRemote) {
+      return true
+    }
+  }
+
+  return isLocal
 }
 
 async function checkoutBranch(ctx: SwitchContext): Promise<void> {
@@ -73,6 +84,53 @@ async function createBranch(ctx: SwitchContext): Promise<void> {
       }
 
       ctx.spinner.succeed(`Created branch ${ctx.branch}`)
+      resolve()
+    })
+  })
+}
+
+async function remoteBranchExists(ctx: SwitchContext): Promise<boolean> {
+  ctx.spinner.start(`Checking if remote branch ${ctx.branch} exists`)
+
+  const output = await new Promise<string>((resolve, reject) => {
+    exec(`git branch --list --remote origin/${ctx.branch}`, (err, stdout) => {
+      if (err) {
+        ctx.spinner.fail(`Failed to check remote branch ${ctx.branch}`)
+        reject(err)
+        return
+      }
+
+      resolve(stdout.trim())
+    })
+  })
+
+  const isRemote = output.length > 0
+
+  if (isRemote) {
+    ctx.spinner.succeed(`Found remote branch ${ctx.branch}`)
+  } else {
+    ctx.spinner.info(
+      `Unable to find remote branch ${ctx.branch}. Will not attempt to pull any changes`
+    )
+  }
+
+  return isRemote
+}
+
+async function pullChanges(ctx: SwitchContext): Promise<void> {
+  ctx.spinner.start(`Pulling changes from branch ${ctx.branch}`)
+
+  await new Promise<void>((resolve, reject) => {
+    exec(`git pull`, (err) => {
+      if (err) {
+        ctx.spinner.fail(`Failed to pull changes from branch ${ctx.branch}`)
+        reject(err)
+        return
+      }
+
+      ctx.spinner.succeed(
+        `Pulled changes from branch ${ctx.branch} successfully`
+      )
       resolve()
     })
   })
@@ -145,6 +203,33 @@ const switchMachine = createMachine<SwitchContext>({
       invoke: {
         id: 'checkoutBranch',
         src: checkoutBranch,
+        onDone: {
+          target: SwitchState.VerifyRemoteBranch,
+        },
+        onError: {
+          target: SwitchState.Final,
+        },
+      },
+    },
+    [SwitchState.VerifyRemoteBranch]: {
+      invoke: {
+        id: 'verifyRemoteBranch',
+        src: remoteBranchExists,
+        onDone: [
+          {
+            cond: isTruthy,
+            target: SwitchState.PullChanges,
+          },
+          {
+            target: SwitchState.Final,
+          },
+        ] as TransitionConfig<SwitchContext, DoneInvokeEvent<boolean>>[],
+      },
+    },
+    [SwitchState.PullChanges]: {
+      invoke: {
+        id: 'pullChanges',
+        src: pullChanges,
         onDone: {
           target: SwitchState.Final,
         },
