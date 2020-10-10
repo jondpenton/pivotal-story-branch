@@ -1,3 +1,4 @@
+import { flags } from '@oclif/command'
 import * as Parser from '@oclif/parser'
 import Ora from 'ora'
 import { interpret } from 'xstate'
@@ -17,14 +18,27 @@ class Switch extends Command {
     },
   ]
 
+  static flags = {
+    'base-branch': flags.string({
+      char: 'b',
+      description: 'Branch used when creating a new branch',
+    }),
+  }
+
   async run() {
-    const { args } = this.parse(Switch)
-    const { token } = await this.getConfig()
+    const { args, flags } = this.parse(Switch)
+    const config = await this.getConfig()
+    const { token } = config
+    let { baseBranch } = config
 
     if (!token) {
       throw new Error(
         `\`token\` is required in configuration. Set one using the 'config:set' command`
       )
+    }
+
+    if (!baseBranch) {
+      baseBranch = flags['base-branch']
     }
 
     let branch: string | undefined
@@ -42,6 +56,7 @@ class Switch extends Command {
         storyId,
         token,
         branch,
+        baseBranch,
       })
     ).start()
   }
