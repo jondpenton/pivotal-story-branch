@@ -142,6 +142,9 @@ USAGE
 
 ARGUMENTS
   BRANCH_OR_STORY_LINK  Branch name or link to Pivotal Tracker story
+
+OPTIONS
+  -b, --base-branch=base-branch  Branch used when creating a new branch
 ```
 
 #### Example

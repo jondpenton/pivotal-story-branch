@@ -19,7 +19,7 @@ class Switch extends Command {
   ]
 
   static flags = {
-    baseBranch: flags.string({
+    'base-branch': flags.string({
       char: 'b',
       description: 'Branch used when creating a new branch',
     }),
@@ -38,7 +38,7 @@ class Switch extends Command {
     }
 
     if (!baseBranch) {
-      baseBranch = flags.baseBranch
+      baseBranch = flags['base-branch']
     }
 
     let branch: string | undefined
